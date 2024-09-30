@@ -18,6 +18,10 @@ func (d *DateBase) GetAccrual(addressAccrual string) {
 		slog.Error("Error :", "gets rows in worker - ", customerrors.ErrNotData)
 		return
 	}
+	if rows.Err() != nil {
+		slog.Error("Error :", "gets rows in worker - ", customerrors.ErrNotData)
+		return
+	}
 	defer func() {
 		if err := rows.Close(); err != nil {
 			slog.Error("Error ", "closing row set:", err)
@@ -74,6 +78,10 @@ func (d *DateBase) GetAccrual(addressAccrual string) {
 			if err != nil {
 				slog.Error("Error worker", "Error check data in worker: ", err)
 				continue
+			}
+			if checkRow.Err() != nil {
+				slog.Error("Error :", "gets rows in worker - ", customerrors.ErrNotData)
+				return
 			}
 
 			if err = checkRow.Scan(&loyaltyStatus); err != nil {
