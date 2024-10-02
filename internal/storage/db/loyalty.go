@@ -50,38 +50,20 @@ func (d *DateBase) SaveLoyaltyData(login, orderID string, bonus int, orderStatus
 	return nil
 }
 
-func (d *DateBase) GetUserByAccessToken(order string, login string, now time.Time) error {
-	var user models.User
+func (d *DateBase) GetLoyalty(order string) (models.Loyalty, error) {
 	var loyalty models.Loyalty
-
-	queryUser := "SELECT id, login FROM users WHERE login = $1"
 	queryLoyalty := "SELECT user_id FROM loyalty WHERE  order_id = $1"
-
-	rowUser, err := d.Get(queryUser, login)
-	if err != nil {
-		return customerrors.ErrNotFound
-	}
-
-	if err = rowUser.Scan(&user.ID, &user.Login); err != nil {
-		return err
-	}
 
 	rowLoyalty, err := d.Get(queryLoyalty, order)
 	if err != nil {
-		return customerrors.ErrNotFound
+		return loyalty, customerrors.ErrNotFound
 	}
 
 	if err = rowLoyalty.Scan(&loyalty.UserID); err != nil {
-
-		d.SaveOrder(user.ID, order, "NEW", now)
-		return nil
+		return loyalty, customerrors.ErrNoOrderInLoyalty
 	}
 
-	if loyalty.UserID != user.ID {
-		return customerrors.ErrAnotherUsersOrder
-	}
-
-	return customerrors.ErrOrderRegistered
+	return loyalty, nil
 }
 
 func (d *DateBase) GetAllUserOrders(login string) ([]*models.OrdersUser, error) {

@@ -1,12 +1,31 @@
 package orders
 
 import (
+	"errors"
+	"github.com/kamencov/go-musthave-diploma-tpl/internal/customerrors"
 	"github.com/kamencov/go-musthave-diploma-tpl/internal/models"
 	"time"
 )
 
-func (s *Service) GetUserByAccessToken(order string, login string, now time.Time) error {
-	return s.db.GetUserByAccessToken(order, login, now)
+func (s *Service) GetLoginByAccessToken(order string, login string, now time.Time) error {
+
+	user, err := s.db.GetLoginID(login)
+	if err != nil {
+		return customerrors.ErrNotFound
+	}
+	loyalty, err := s.db.GetLoyalty(order)
+	if errors.Is(err, customerrors.ErrNoOrderInLoyalty) {
+		err = s.db.SaveOrder(user, order, models.NewOrder, now)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	if loyalty.UserID != user {
+		return customerrors.ErrAnotherUsersOrder
+	}
+
+	return customerrors.ErrOrderRegistered
 }
 
 func (s *Service) GetAllUserOrders(login string) ([]*models.OrdersUser, error) {

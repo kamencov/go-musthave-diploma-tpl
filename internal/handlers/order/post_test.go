@@ -8,6 +8,7 @@ import (
 	"github.com/kamencov/go-musthave-diploma-tpl/internal/customerrors"
 	"github.com/kamencov/go-musthave-diploma-tpl/internal/logger"
 	"github.com/kamencov/go-musthave-diploma-tpl/internal/middleware"
+	"github.com/kamencov/go-musthave-diploma-tpl/internal/models"
 	"github.com/kamencov/go-musthave-diploma-tpl/internal/service/orders"
 	"io"
 	"net/http"
@@ -20,18 +21,27 @@ func TestHandlerPost(t *testing.T) {
 		name           string
 		body           string
 		login          string
+		loginID        int
+		loyalty        models.Loyalty
+		loginErr       error
+		loyaltyErr     error
 		responseError  error
 		expectedStatus int
 	}{
 		{
-			name:           "Successful_post",
-			body:           "22664155",
-			login:          "test",
+			name:    "Successful_post",
+			body:    "22664155",
+			login:   "test",
+			loginID: 1,
+			loyalty: models.Loyalty{
+				UserID: 1,
+			},
+			loyaltyErr:     customerrors.ErrNoOrderInLoyalty,
 			expectedStatus: http.StatusAccepted,
 		},
 		{
 			name:           "User_not_authenticated",
-			login:          "",
+			loginID:        0,
 			expectedStatus: http.StatusInternalServerError,
 		},
 		{
@@ -40,24 +50,31 @@ func TestHandlerPost(t *testing.T) {
 			expectedStatus: http.StatusUnprocessableEntity,
 		},
 		{
-			name:           "Order_another_user",
-			body:           "22664155",
-			login:          "test",
-			responseError:  customerrors.ErrAnotherUsersOrder,
+			name:    "Order_another_user",
+			body:    "22664155",
+			login:   "test",
+			loginID: 1,
+			loyalty: models.Loyalty{
+				UserID: 2,
+			},
 			expectedStatus: http.StatusConflict,
 		},
 		{
-			name:           "Order_another_user",
-			body:           "22664155",
-			login:          "test",
-			responseError:  customerrors.ErrOrderRegistered,
+			name:    "Order_this_user",
+			body:    "22664155",
+			login:   "test",
+			loginID: 1,
+			loyalty: models.Loyalty{
+				UserID: 1,
+			},
 			expectedStatus: http.StatusOK,
 		},
 		{
-			name:           "Order_another_user",
+			name:           "Error_status_500",
 			body:           "22664155",
 			login:          "test",
-			responseError:  errors.New("cannot loading order"),
+			loginID:        1,
+			loginErr:       errors.New("cannot loading order"),
 			expectedStatus: http.StatusInternalServerError,
 		},
 	}
@@ -68,8 +85,9 @@ func TestHandlerPost(t *testing.T) {
 			ctrl := gomock.NewController(t)
 
 			repo := orders.NewMockStorage(ctrl)
-			repo.EXPECT().GetUserByAccessToken(tt.body, tt.login, gomock.Any()).Return(tt.responseError).AnyTimes()
-
+			repo.EXPECT().GetLoginID(gomock.Any()).Return(tt.loginID, tt.loginErr).AnyTimes()
+			repo.EXPECT().GetLoyalty(gomock.Any()).Return(tt.loyalty, tt.loyaltyErr).AnyTimes()
+			repo.EXPECT().SaveOrder(tt.loginID, tt.body, gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 			serv := orders.NewService(repo, loger)
 
 			req, err := http.NewRequest("POST", "/", io.NopCloser(bytes.NewBufferString(tt.body)))

@@ -10,7 +10,9 @@ import (
 //go:generate mockgen -source=./service.go -destination=service_mock.go -package=orders
 type Storage interface {
 	SaveNewStatusAndBonus(accrual models.ResponseAccrual) error
-	GetUserByAccessToken(order string, login string, now time.Time) error
+	SaveOrder(userID int, orderID string, orderStatus string, now time.Time) error
+	GetLoyalty(order string) (models.Loyalty, error)
+	GetLoginID(login string) (int, error)
 	GetAllUserOrders(login string) ([]*models.OrdersUser, error)
 	GetAllOrders() ([]db.Order, error)
 	GetBalanceUser(login string) (*models.Balance, error)

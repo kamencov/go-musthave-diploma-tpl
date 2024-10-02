@@ -14,6 +14,7 @@ var (
 	ErrNotData           = errors.New("not data to answer")
 	ErrNotEnoughBonuses  = errors.New("not enough bonuses")
 	ErrUserNotFound      = errors.New("user not found")
+	ErrNoOrderInLoyalty  = errors.New("error, no order in loyalty")
 )
 
 type APIError struct {

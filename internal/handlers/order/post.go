@@ -59,7 +59,7 @@ func (h *Handler) Post(w http.ResponseWriter, r *http.Request) {
 	now := time.Now()
 
 	// Проверяем заказ в базе
-	if err = h.service.GetUserByAccessToken(orderNumber, login, now); err != nil {
+	if err = h.service.GetLoginByAccessToken(orderNumber, login, now); err != nil {
 		if errors.Is(err, customerrors.ErrAnotherUsersOrder) {
 			h.log.Error("error post order", "error:", err)
 			apiError, _ := json.Marshal(customerrors.APIError{Message: "order number has already been uploaded by another user"})
