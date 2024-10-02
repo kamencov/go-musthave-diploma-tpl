@@ -10,6 +10,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	models "github.com/kamencov/go-musthave-diploma-tpl/internal/models"
+	db "github.com/kamencov/go-musthave-diploma-tpl/internal/storage/db"
 )
 
 // MockStorage is a mock of Storage interface.
@@ -49,16 +50,19 @@ func (mr *MockStorageMockRecorder) CheckWriteOffOfFunds(login, order, sum, now i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckWriteOffOfFunds", reflect.TypeOf((*MockStorage)(nil).CheckWriteOffOfFunds), login, order, sum, now)
 }
 
-// GetAccrual mocks base method.
-func (m *MockStorage) GetAccrual(addressAccrual string) {
+// GetAllOrders mocks base method.
+func (m *MockStorage) GetAllOrders() ([]db.Order, error) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "GetAccrual", addressAccrual)
+	ret := m.ctrl.Call(m, "GetAllOrders")
+	ret0, _ := ret[0].([]db.Order)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
-// GetAccrual indicates an expected call of GetAccrual.
-func (mr *MockStorageMockRecorder) GetAccrual(addressAccrual interface{}) *gomock.Call {
+// GetAllOrders indicates an expected call of GetAllOrders.
+func (mr *MockStorageMockRecorder) GetAllOrders() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccrual", reflect.TypeOf((*MockStorage)(nil).GetAccrual), addressAccrual)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllOrders", reflect.TypeOf((*MockStorage)(nil).GetAllOrders))
 }
 
 // GetAllUserOrders mocks base method.
@@ -118,4 +122,18 @@ func (m *MockStorage) GetWithdrawals(login string) ([]*models.Withdrawals, error
 func (mr *MockStorageMockRecorder) GetWithdrawals(login interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWithdrawals", reflect.TypeOf((*MockStorage)(nil).GetWithdrawals), login)
+}
+
+// SaveNewStatusAndBonus mocks base method.
+func (m *MockStorage) SaveNewStatusAndBonus(accrual models.ResponseAccrual) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SaveNewStatusAndBonus", accrual)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SaveNewStatusAndBonus indicates an expected call of SaveNewStatusAndBonus.
+func (mr *MockStorageMockRecorder) SaveNewStatusAndBonus(accrual interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveNewStatusAndBonus", reflect.TypeOf((*MockStorage)(nil).SaveNewStatusAndBonus), accrual)
 }

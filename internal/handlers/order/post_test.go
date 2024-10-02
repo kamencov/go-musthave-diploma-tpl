@@ -24,37 +24,37 @@ func TestHandlerPost(t *testing.T) {
 		expectedStatus int
 	}{
 		{
-			name:           "Successful post",
+			name:           "Successful_post",
 			body:           "22664155",
 			login:          "test",
 			expectedStatus: http.StatusAccepted,
 		},
 		{
-			name:           "User not authenticated",
+			name:           "User_not_authenticated",
 			login:          "",
 			expectedStatus: http.StatusInternalServerError,
 		},
 		{
-			name:           "invalid order numbers",
+			name:           "invalid_order_numbers",
 			body:           "5",
 			expectedStatus: http.StatusUnprocessableEntity,
 		},
 		{
-			name:           "order another user",
+			name:           "Order_another_user",
 			body:           "22664155",
 			login:          "test",
 			responseError:  customerrors.ErrAnotherUsersOrder,
 			expectedStatus: http.StatusConflict,
 		},
 		{
-			name:           "order another user",
+			name:           "Order_another_user",
 			body:           "22664155",
 			login:          "test",
 			responseError:  customerrors.ErrOrderRegistered,
 			expectedStatus: http.StatusOK,
 		},
 		{
-			name:           "order another user",
+			name:           "Order_another_user",
 			body:           "22664155",
 			login:          "test",
 			responseError:  errors.New("cannot loading order"),

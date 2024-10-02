@@ -26,7 +26,7 @@ func TestHandlerGet(t *testing.T) {
 		expectedStatus  int
 	}{
 		{
-			name:  "Successful get withdraw",
+			name:  "Successful_get_withdraw",
 			login: "test",
 			withdrawalsBody: []*models.Withdrawals{
 				{Order: "22222",
@@ -36,7 +36,7 @@ func TestHandlerGet(t *testing.T) {
 			expectedStatus: http.StatusOK,
 		},
 		{
-			name:  "Bad login",
+			name:  "Bad_login",
 			login: "",
 			withdrawalsBody: []*models.Withdrawals{
 				{Order: "22222",
@@ -46,7 +46,7 @@ func TestHandlerGet(t *testing.T) {
 			expectedStatus: http.StatusInternalServerError,
 		},
 		{
-			name:  "Bad get withdrawals",
+			name:  "Bad_get_withdrawals",
 			login: "test",
 			withdrawalsBody: []*models.Withdrawals{
 				{Order: "22222",
@@ -57,7 +57,7 @@ func TestHandlerGet(t *testing.T) {
 			expectedStatus: http.StatusInternalServerError,
 		},
 		{
-			name:            "there is not a single write-off",
+			name:            "There_is_not_a_single_write-off",
 			login:           "test",
 			withdrawalsBody: []*models.Withdrawals{},
 			expectedStatus:  http.StatusNoContent,

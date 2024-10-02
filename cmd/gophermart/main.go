@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"github.com/go-chi/chi/v5"
-	"github.com/joho/godotenv"
 	"github.com/kamencov/go-musthave-diploma-tpl/internal/handlers/authorize"
 	"github.com/kamencov/go-musthave-diploma-tpl/internal/handlers/balance"
 	"github.com/kamencov/go-musthave-diploma-tpl/internal/handlers/order"
@@ -15,18 +14,14 @@ import (
 	"github.com/kamencov/go-musthave-diploma-tpl/internal/service/orders"
 	"github.com/kamencov/go-musthave-diploma-tpl/internal/storage/db"
 	"github.com/kamencov/go-musthave-diploma-tpl/internal/workers"
-	"log/slog"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 func main() {
-
-	err := godotenv.Load(".env")
-	if err != nil {
-		slog.Error("Fatal", "error loading .env file = ", err)
-	}
-
 	// инициализируем Config
 	cfg := NewConfig()
 	cfg.Parsed()
@@ -49,12 +44,8 @@ func main() {
 	logs.Info("Service run")
 
 	// инициализируем проверку авторизацию
-	serviceAuth := auth.NewService([]byte(os.Getenv("TOKEN_SALT")), []byte(os.Getenv("PASSWORD_SALT")), repo)
+	serviceAuth := auth.NewService(cfg.TokenSalt, cfg.PasswordSalt, repo)
 	logs.Info("Service authorize run")
-
-	// инициализируем запись Context
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	// запускаем воркер
 	worker := workers.NewWorkerAccrual(serv, logs)
@@ -85,8 +76,29 @@ func main() {
 		r.Get("/withdrawals", withdrawHandler.Get)
 	})
 
+	// инициализируем запись Context
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	go worker.StartWorkerAccrual(ctx, cfg.AccrualSystemAddress)
-	if err := http.ListenAndServe(":8080", r); err != nil {
-		logs.Error("Err:", logger.ErrAttr(err))
-	}
+
+	// Слушаем сигналы
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		if err := http.ListenAndServe(":8080", r); err != nil {
+			logs.Error("Err:", logger.ErrAttr(err))
+		}
+
+	}()
+
+	<-sigs
+	cancel()
+
+	// Ждем завершения всех работников
+	time.Sleep(time.Second * 2)
+
+	logs.Info("Сервер завершил работу грациозно")
+
 }

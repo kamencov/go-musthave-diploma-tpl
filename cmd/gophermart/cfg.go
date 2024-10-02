@@ -2,6 +2,8 @@ package main
 
 import (
 	"flag"
+	"github.com/joho/godotenv"
+	"log/slog"
 	"os"
 )
 
@@ -10,6 +12,8 @@ type Configs struct {
 	LogLevel             string
 	AddrConDB            string
 	AccrualSystemAddress string
+	TokenSalt            []byte
+	PasswordSalt         []byte
 }
 
 func NewConfig() *Configs {
@@ -17,6 +21,7 @@ func NewConfig() *Configs {
 }
 
 func (c *Configs) Parsed() {
+	c.initSaltFromEnv()
 	c.parseFlags()
 	// Проверка переменной окружения RUN_ADDRESS
 	if c.RunAddress == "" {
@@ -46,6 +51,7 @@ func (c *Configs) Parsed() {
 			c.AccrualSystemAddress = envAccrualSystemAddress
 		}
 	}
+
 }
 
 func (c *Configs) parseFlags() {
@@ -58,4 +64,15 @@ func (c *Configs) parseFlags() {
 	// Флаг -r отвечает за адрес системы расчета начислений
 	flag.StringVar(&c.AccrualSystemAddress, "r", "", "address accrual system address")
 	flag.Parse()
+}
+
+func (c *Configs) initSaltFromEnv() {
+	err := godotenv.Load("../../.env")
+	if err != nil {
+		slog.Error("Fatal", "error loading .env file = ", err)
+		return
+	}
+
+	c.TokenSalt = []byte(os.Getenv("TOKEN_SALT"))
+	c.PasswordSalt = []byte(os.Getenv("PASSWORD_SALT"))
 }

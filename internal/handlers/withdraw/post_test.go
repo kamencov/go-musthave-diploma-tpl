@@ -26,7 +26,7 @@ func TestHandlerPost(t *testing.T) {
 		expectedStatus int
 	}{
 		{
-			name:  "Successful post",
+			name:  "Successful_post",
 			login: "test",
 			requestBody: RequestBody{
 				Order: "22664155",
@@ -35,7 +35,7 @@ func TestHandlerPost(t *testing.T) {
 			expectedStatus: http.StatusOK,
 		},
 		{
-			name:  "Invalid body",
+			name:  "Invalid_body",
 			login: "test",
 			requestBody: RequestBody{
 				Order: "22664155",
@@ -45,7 +45,7 @@ func TestHandlerPost(t *testing.T) {
 			expectedStatus: http.StatusBadRequest,
 		},
 		{
-			name:  "Invalid order",
+			name:  "Invalid_order",
 			login: "test",
 			requestBody: RequestBody{
 				Order: "226641551",
@@ -54,7 +54,7 @@ func TestHandlerPost(t *testing.T) {
 			expectedStatus: http.StatusUnprocessableEntity,
 		},
 		{
-			name:  "Invalid login",
+			name:  "Invalid_login",
 			login: "",
 			requestBody: RequestBody{
 				Order: "22664155",
@@ -63,7 +63,7 @@ func TestHandlerPost(t *testing.T) {
 			expectedStatus: http.StatusInternalServerError,
 		},
 		{
-			name:  "order is not in the database",
+			name:  "Order_is_not_in_the_database",
 			login: "test",
 			requestBody: RequestBody{
 				Order: "22664155",
@@ -73,7 +73,7 @@ func TestHandlerPost(t *testing.T) {
 			expectedStatus: http.StatusUnprocessableEntity,
 		},
 		{
-			name:  "don't have enough bonuses",
+			name:  "Don't_have_enough_bonuses",
 			login: "test",
 			requestBody: RequestBody{
 				Order: "22664155",
@@ -83,7 +83,7 @@ func TestHandlerPost(t *testing.T) {
 			expectedStatus: http.StatusPaymentRequired,
 		},
 		{
-			name:  "check status 500",
+			name:  "Check_status_500",
 			login: "test",
 			requestBody: RequestBody{
 				Order: "22664155",

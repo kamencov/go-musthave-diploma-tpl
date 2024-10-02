@@ -30,7 +30,7 @@ func TestPost(t *testing.T) {
 		expectedStatus int
 	}{
 		{
-			name: "Successful registration and authentication",
+			name: "Successful_registration_and_authentication",
 			requestBody: RequestBody{
 				Login:    "test",
 				Password: "password",
@@ -41,7 +41,7 @@ func TestPost(t *testing.T) {
 			expectedStatus: http.StatusOK,
 		},
 		{
-			name:        "Invalid request body",
+			name:        "Invalid_request_body",
 			requestBody: RequestBody{},
 			returnBody: returnBody{
 				withIncorrectBody: true,
@@ -49,7 +49,7 @@ func TestPost(t *testing.T) {
 			expectedStatus: http.StatusBadRequest,
 		},
 		{
-			name: "User already exists",
+			name: "User_already_exists",
 			requestBody: RequestBody{
 				Login:    "existing",
 				Password: "password",
@@ -60,7 +60,7 @@ func TestPost(t *testing.T) {
 			expectedStatus: http.StatusConflict,
 		},
 		{
-			name: "Registration error",
+			name: "Registration_error",
 			requestBody: RequestBody{
 				Login:    "test",
 				Password: "password",
@@ -70,7 +70,7 @@ func TestPost(t *testing.T) {
 			expectedStatus: http.StatusInternalServerError,
 		},
 		{
-			name: "Authentication error",
+			name: "Authentication_error",
 			requestBody: RequestBody{
 				Login:    "test",
 				Password: "password",

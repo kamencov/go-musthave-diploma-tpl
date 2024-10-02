@@ -23,7 +23,7 @@ func TestHandlerGet(t *testing.T) {
 		expectedStatus int
 	}{
 		{
-			name:  "Successful get",
+			name:  "Successful_get",
 			login: "test",
 			order: []*models.OrdersUser{
 				{
@@ -36,12 +36,12 @@ func TestHandlerGet(t *testing.T) {
 			expectedStatus: http.StatusOK,
 		},
 		{
-			name:           "User not authenticated",
+			name:           "User_not_authenticated",
 			login:          "",
 			expectedStatus: http.StatusInternalServerError,
 		},
 		{
-			name:  "No data to answer",
+			name:  "No_data_to_answer",
 			login: "test",
 			order: []*models.OrdersUser{
 				{
@@ -55,14 +55,14 @@ func TestHandlerGet(t *testing.T) {
 			expectedStatus: http.StatusNoContent,
 		},
 		{
-			name:           "Cannot loading order",
+			name:           "Cannot_loading_order",
 			login:          "test",
 			order:          []*models.OrdersUser{},
 			responseError:  errors.New("cannot loading order"),
 			expectedStatus: http.StatusInternalServerError,
 		},
 		{
-			name:           "Len data 0",
+			name:           "Len_data_0",
 			login:          "test",
 			order:          []*models.OrdersUser{},
 			expectedStatus: http.StatusNoContent,

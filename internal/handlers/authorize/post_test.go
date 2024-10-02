@@ -32,7 +32,7 @@ func TestHandlerPost(t *testing.T) {
 		expectedStatus int
 	}{
 		{
-			name: "Successful login",
+			name: "Successful_login",
 			resultBody: resultBody{
 				checkTableUserPassword: true,
 			},
@@ -40,21 +40,21 @@ func TestHandlerPost(t *testing.T) {
 		},
 
 		{
-			name: "invalid request body",
+			name: "Invalid_request_body",
 			resultBody: resultBody{
 				withIncorrectBody: true,
 			},
 			expectedStatus: http.StatusBadRequest,
 		},
 		{
-			name: "not found authorization",
+			name: "Not_found_authorization",
 			resultBody: resultBody{
 				saveTableUserAndUpdateToken: customerrors.ErrNotFound,
 			},
 			expectedStatus: http.StatusUnauthorized,
 		},
 		{
-			name: "incorrect password",
+			name: "Incorrect_password",
 			resultBody: resultBody{
 				checkTableUserPassword:      true,
 				saveTableUserAndUpdateToken: customerrors.ErrWrongPassword,
@@ -62,7 +62,7 @@ func TestHandlerPost(t *testing.T) {
 			expectedStatus: http.StatusForbidden,
 		},
 		{
-			name: "can't authorize user",
+			name: "Can't_authorize_user",
 			resultBody: resultBody{
 				checkTableUserPassword:      true,
 				saveTableUserAndUpdateToken: errors.New("can't authorize user"),

@@ -15,15 +15,6 @@ import (
 )
 
 //go:generate mockgen -source=./service.go -destination=service_mock.go -package=auth
-type AuthService interface {
-	RegisterUser(login, password string) error
-	AuthUser(login, password string) (entity.Tokens, error)
-	VerifyUser(token string) (string, error)
-	RefreshToken(token string) (entity.Tokens, error)
-	GeneratedTokens(login string) (entity.Tokens, error)
-	HashPassword(password string) string
-}
-
 type StorageAuth interface {
 	CheckTableUserLogin(login string) error
 	CheckTableUserPassword(password string) (string, bool)

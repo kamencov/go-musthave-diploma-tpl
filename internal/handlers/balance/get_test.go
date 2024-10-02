@@ -22,7 +22,7 @@ func TestHandlerGet(t *testing.T) {
 		expectedStatus int
 	}{
 		{
-			name:  "Successful get balance",
+			name:  "Successful_get_balance",
 			login: "test",
 			getBalanceUser: &models.Balance{
 				Current:  555.5,
@@ -31,7 +31,7 @@ func TestHandlerGet(t *testing.T) {
 			expectedStatus: http.StatusOK,
 		},
 		{
-			name:  "Invalid login",
+			name:  "Invalid_login",
 			login: "",
 			getBalanceUser: &models.Balance{
 				Current:  555.5,
@@ -40,7 +40,7 @@ func TestHandlerGet(t *testing.T) {
 			expectedStatus: http.StatusInternalServerError,
 		},
 		{
-			name:  "Error get balance",
+			name:  "Error_get_balance",
 			login: "test",
 			getBalanceUser: &models.Balance{
 				Current:  555.5,
