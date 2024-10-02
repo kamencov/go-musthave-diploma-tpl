@@ -21,7 +21,7 @@ func (s *Service) GetAccrual(addressAccrual string) {
 
 		var accrual models.ResponseAccrual
 
-		req, err := http.Get(fmt.Sprintf("%s/api/orders/%s", addressAccrual, order))
+		req, err := http.Get(fmt.Sprintf("%s/api/orders/%s", addressAccrual, order.OrderID))
 		if err != nil {
 			slog.Error("Error worker", "Error making request in worker :", err)
 			continue
