@@ -15,9 +15,10 @@ type Storage interface {
 	GetLoginID(login string) (int, error)
 	GetAllUserOrders(login string) ([]*models.OrdersUser, error)
 	GetAllOrders() ([]db.Order, error)
+	GetSumBonus(userID int) (float32, error)
 	GetBalanceUser(login string) (*models.Balance, error)
 	GetWithdrawals(login string) ([]*models.Withdrawals, error)
-	CheckWriteOffOfFunds(login, order string, sum float32, now time.Time) error
+	UpdateOrder(order string, sum float32, now time.Time) error
 }
 
 type Service struct {

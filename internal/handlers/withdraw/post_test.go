@@ -22,6 +22,8 @@ func TestHandlerPost(t *testing.T) {
 		login          string
 		requestBody    RequestBody
 		whenBodyBad    bool
+		sumBonus       float32
+		sumBonusError  error
 		responseError  error
 		expectedStatus int
 	}{
@@ -32,6 +34,7 @@ func TestHandlerPost(t *testing.T) {
 				Order: "22664155",
 				Sum:   55.5,
 			},
+			sumBonus:       55.5,
 			expectedStatus: http.StatusOK,
 		},
 		{
@@ -69,7 +72,7 @@ func TestHandlerPost(t *testing.T) {
 				Order: "22664155",
 				Sum:   55.5,
 			},
-			responseError:  customerrors.ErrNotData,
+			sumBonusError:  customerrors.ErrNotData,
 			expectedStatus: http.StatusUnprocessableEntity,
 		},
 		{
@@ -79,7 +82,7 @@ func TestHandlerPost(t *testing.T) {
 				Order: "22664155",
 				Sum:   55.5,
 			},
-			responseError:  customerrors.ErrNotEnoughBonuses,
+			sumBonus:       53.5,
 			expectedStatus: http.StatusPaymentRequired,
 		},
 		{
@@ -100,7 +103,11 @@ func TestHandlerPost(t *testing.T) {
 			loger := logger.NewLogger()
 
 			repo := orders.NewMockStorage(ctrl)
-			repo.EXPECT().CheckWriteOffOfFunds(tt.login, tt.requestBody.Order, tt.requestBody.Sum, gomock.Any()).Return(tt.responseError).AnyTimes()
+			repo.EXPECT().GetLoginID(gomock.Any()).Return(1, tt.responseError).AnyTimes()
+			repo.EXPECT().GetSumBonus(gomock.Any()).Return(tt.sumBonus, tt.sumBonusError).AnyTimes()
+			repo.EXPECT().SaveOrder(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+			repo.EXPECT().UpdateOrder(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+			//repo.EXPECT().CheckWriteOffOfFunds(tt.login, tt.requestBody.Order, tt.requestBody.Sum, gomock.Any()).Return(tt.responseError).AnyTimes()
 
 			serv := orders.NewService(repo, loger)
 			handler := NewHandler(serv, loger)

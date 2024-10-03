@@ -208,41 +208,31 @@ func (d *DateBase) GetWithdrawals(login string) ([]*models.Withdrawals, error) {
 
 }
 
-func (d *DateBase) CheckWriteOffOfFunds(login, order string, sum float32, now time.Time) error {
+func (d *DateBase) GetSumBonus(userID int) (float32, error) {
 	var sumBonus float32
-
-	userID, err := d.GetLoginID(login)
-	if err != nil {
-		return err
-	}
 
 	queryCheckSumAccrual := "SELECT SUM(bonus) FROM loyalty WHERE user_id = $1"
 
 	rowSum, err := d.Get(queryCheckSumAccrual, userID)
 
 	if err != nil {
-		return customerrors.ErrNotData
+		return 0, customerrors.ErrNotData
 	}
 
 	if err = rowSum.Scan(&sumBonus); err != nil {
-		return customerrors.ErrNotBonus
+		return 0, customerrors.ErrNotBonus
 	}
 
-	if sum > sumBonus {
-		return customerrors.ErrNotEnoughBonuses
-	}
+	return sumBonus, nil
+}
 
-	// сохраняем новый ордер
-	if err = d.SaveOrder(userID, order, models.NewOrder, now); err != nil {
-		return err
-	}
-
+func (d *DateBase) UpdateOrder(order string, sum float32, now time.Time) error {
 	// обновляем новыми данными
 	querySave := "UPDATE loyalty SET processed_at = $1, withdraw = $2 WHERE order_id = $3"
 
 	rfc3339Time := now.Format(time.RFC3339)
 
-	if err = d.Save(querySave, rfc3339Time, sum, order); err != nil {
+	if err := d.Save(querySave, rfc3339Time, sum, order); err != nil {
 		return err
 	}
 	return nil

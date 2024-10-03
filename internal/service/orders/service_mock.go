@@ -36,20 +36,6 @@ func (m *MockStorage) EXPECT() *MockStorageMockRecorder {
 	return m.recorder
 }
 
-// CheckWriteOffOfFunds mocks base method.
-func (m *MockStorage) CheckWriteOffOfFunds(login, order string, sum float32, now time.Time) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CheckWriteOffOfFunds", login, order, sum, now)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// CheckWriteOffOfFunds indicates an expected call of CheckWriteOffOfFunds.
-func (mr *MockStorageMockRecorder) CheckWriteOffOfFunds(login, order, sum, now interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckWriteOffOfFunds", reflect.TypeOf((*MockStorage)(nil).CheckWriteOffOfFunds), login, order, sum, now)
-}
-
 // GetAllOrders mocks base method.
 func (m *MockStorage) GetAllOrders() ([]db.Order, error) {
 	m.ctrl.T.Helper()
@@ -125,6 +111,21 @@ func (mr *MockStorageMockRecorder) GetLoyalty(order interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLoyalty", reflect.TypeOf((*MockStorage)(nil).GetLoyalty), order)
 }
 
+// GetSumBonus mocks base method.
+func (m *MockStorage) GetSumBonus(userID int) (float32, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSumBonus", userID)
+	ret0, _ := ret[0].(float32)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSumBonus indicates an expected call of GetSumBonus.
+func (mr *MockStorageMockRecorder) GetSumBonus(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSumBonus", reflect.TypeOf((*MockStorage)(nil).GetSumBonus), userID)
+}
+
 // GetWithdrawals mocks base method.
 func (m *MockStorage) GetWithdrawals(login string) ([]*models.Withdrawals, error) {
 	m.ctrl.T.Helper()
@@ -166,4 +167,18 @@ func (m *MockStorage) SaveOrder(userID int, orderID, orderStatus string, now tim
 func (mr *MockStorageMockRecorder) SaveOrder(userID, orderID, orderStatus, now interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveOrder", reflect.TypeOf((*MockStorage)(nil).SaveOrder), userID, orderID, orderStatus, now)
+}
+
+// UpdateOrder mocks base method.
+func (m *MockStorage) UpdateOrder(order string, sum float32, now time.Time) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateOrder", order, sum, now)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateOrder indicates an expected call of UpdateOrder.
+func (mr *MockStorageMockRecorder) UpdateOrder(order, sum, now interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateOrder", reflect.TypeOf((*MockStorage)(nil).UpdateOrder), order, sum, now)
 }
