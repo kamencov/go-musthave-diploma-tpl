@@ -69,6 +69,4 @@ func (s *Service) CheckWriteOffOfFunds(login, order string, sum float32, now tim
 	}
 
 	return nil
-
-	//return s.db.CheckWriteOffOfFunds(login, order, sum, now)
 }
