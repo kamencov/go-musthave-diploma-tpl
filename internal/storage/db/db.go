@@ -18,6 +18,14 @@ type DB interface {
 	Close() error
 }
 
+type User interface {
+	SaveTableUserAndUpdateToken(login, accessToken string) error
+	GetLoginID(login string) (int, error)
+	SearchLoginByToken(accessToken string) (string, error)
+	CheckTableUserLogin(login string) error
+	CheckTableUserPassword(login string) (string, bool)
+}
+
 func NewDB(logs *logger.Logger, addressConDB string) (*DateBase, error) {
 	pstgr := &DateBase{}
 	err := pstgr.initDB(logs, addressConDB)
@@ -46,7 +54,7 @@ func (d *DateBase) createTableIfNotExists() error {
 	queryUsers := `
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
-            login TEXT NOT NULL UNIQUE,
+            searchTokin TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
             access_token TEXT
         );

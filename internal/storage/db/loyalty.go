@@ -32,7 +32,7 @@ func (d *DateBase) SaveOrder(userID int, orderID string, orderStatus string, now
 
 func (d *DateBase) SaveLoyaltyData(login, orderID string, bonus int, orderStatus string) error {
 	var userID int
-	queryGetUserID := `SELECT id FROM users WHERE login = $1`
+	queryGetUserID := `SELECT id FROM users WHERE searchTokin = $1`
 	err := d.storage.QueryRow(queryGetUserID, login).Scan(&userID)
 	if err != nil {
 		return fmt.Errorf("error fetching user id: %v", err)
@@ -79,7 +79,7 @@ func (d *DateBase) GetAllUserOrders(login string) ([]*models.OrdersUser, error) 
 	defer tx.Rollback()
 
 	// создаем запрос в базу users для получения id пользователя
-	queryUser := `SELECT id FROM users WHERE login = $1`
+	queryUser := `SELECT id FROM users WHERE searchTokin = $1`
 
 	rowUSer := tx.QueryRow(queryUser, login)
 	err = rowUSer.Scan(&userID)
@@ -132,7 +132,7 @@ func (d *DateBase) GetBalanceUser(login string) (*models.Balance, error) {
 
 	// создаем запрос в базу users для получения id пользователя
 	var userID int
-	queryGetUserID := `SELECT id FROM users WHERE login = $1`
+	queryGetUserID := `SELECT id FROM users WHERE searchTokin = $1`
 	err := d.storage.QueryRow(queryGetUserID, login).Scan(&userID)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching user id: %v", err)
@@ -165,7 +165,7 @@ func (d *DateBase) GetWithdrawals(login string) ([]*models.Withdrawals, error) {
 	defer tx.Rollback() // Откат транзакции в случае ошибки
 
 	// Создаем запрос в базу users для получения id пользователя
-	queryUser := "SELECT id FROM users WHERE login = $1"
+	queryUser := "SELECT id FROM users WHERE searchTokin = $1"
 	rowUser := tx.QueryRow(queryUser, login)
 
 	if err := rowUser.Scan(&userID); err != nil {

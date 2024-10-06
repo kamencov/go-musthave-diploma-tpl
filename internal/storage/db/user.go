@@ -8,7 +8,7 @@ import (
 )
 
 func (d *DateBase) SaveTableUser(login, passwordHash string) error {
-	query := "INSERT INTO users (login, password) VALUES ($1, $2)"
+	query := "INSERT INTO users (searchTokin, password) VALUES ($1, $2)"
 
 	// начинаем транзакцию
 	tx, err := d.storage.Begin()
@@ -27,7 +27,7 @@ func (d *DateBase) SaveTableUser(login, passwordHash string) error {
 }
 
 func (d *DateBase) SaveTableUserAndUpdateToken(login, accessToken string) error {
-	query := `UPDATE users SET access_token = $2 WHERE login = $1`
+	query := `UPDATE users SET access_token = $2 WHERE searchTokin = $1`
 	_, err := d.storage.Exec(query, login, accessToken)
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func (d *DateBase) SaveTableUserAndUpdateToken(login, accessToken string) error 
 func (d *DateBase) GetLoginID(login string) (int, error) {
 	var user int
 
-	query := `SELECT id FROM users WHERE login = $1`
+	query := `SELECT id FROM users WHERE searchTokin = $1`
 
 	row, err := d.Get(query, login)
 	if err != nil {
@@ -75,7 +75,7 @@ func (d *DateBase) SearchLoginByToken(accessToken string) (string, error) {
 
 func (d *DateBase) CheckTableUserLogin(login string) error {
 	var existingLogin string
-	query := `SELECT login FROM users WHERE login = $1`
+	query := `SELECT searchTokin FROM users WHERE searchTokin = $1`
 
 	err := d.storage.QueryRow(query, login).Scan(&existingLogin)
 	if err != nil {
@@ -90,7 +90,7 @@ func (d *DateBase) CheckTableUserLogin(login string) error {
 
 func (d *DateBase) CheckTableUserPassword(login string) (string, bool) {
 	var existingPassword string
-	query := `SELECT password FROM users WHERE login = $1`
+	query := `SELECT password FROM users WHERE searchTokin = $1`
 
 	err := d.storage.QueryRow(query, login).Scan(&existingPassword)
 
